@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<h1>Hello World!</h1>
+
+<p>Server time: <span th:text="${serverTime}"></span></p>
+
+<p>Here are some items:</p>
+<ul>
+    <li th:each="item : ${someItems}" th:text="${item}"></li>
+</ul>
+
+<p>Do we have a message from the dummy service:</p>
+
+<div th:if="${dummyService == null}">
+    <p>No, dummy service is null.</p>
+</div>
+<div th:if="${dummyService != null}">
+    <p>Yes: <span th:text="${dummyService.getMessage()}"></span></p>
+</div>
+
+<p><a href="resources/static.txt">A static file.</a></p>
+
+<p><a href="metrics">Yammer Metrics</a></p>
+
+</body>
+</html>
