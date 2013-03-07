@@ -17,7 +17,7 @@
     <logback.version>1.0.9</logback.version>
     <yammer.metrics.version>2.2.0</yammer.metrics.version>
     <jetty.version>8.1.8.v20121106</jetty.version>
-    <thymeleaf.version>2.0.14</thymeleaf.version>
+    <thymeleaf.version>2.0.16</thymeleaf.version>
   </properties>
 
   <dependencies>
