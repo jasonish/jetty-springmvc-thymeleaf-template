@@ -27,7 +27,8 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(useDefaultFilters = false, basePackages = { "ca.unx.template" }, includeFilters = { @ComponentScan.Filter(Controller.class) })
+@ComponentScan(useDefaultFilters = false, basePackages = {"ca.unx.template"},
+        includeFilters = {@ComponentScan.Filter(Controller.class)})
 @ImportResource("classpath:META-INF/spring/servlet-context.xml")
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
@@ -53,7 +54,8 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ServletContextTemplateResolver thymeleafTemplateResolver() {
-        ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
+        ServletContextTemplateResolver resolver =
+                new ServletContextTemplateResolver();
         resolver.setPrefix("/WEB-INF/thymeleaf/");
         resolver.setSuffix(".html");
         resolver.setTemplateMode("HTML5");

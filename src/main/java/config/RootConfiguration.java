@@ -13,11 +13,14 @@ import org.springframework.stereotype.Controller;
  * this context class.
  *
  * Component scanning is also done to pickup any components other than
+ *
  * @Controllers. @Controllers will be picked up by the SpringMVC context.
  */
 @Configuration
-@ImportResource("classpath:META-INF/spring/root-context.xml")
-@Import({ config.JettyConfiguration.class })
-@ComponentScan(basePackages = { "ca.unx.template" }, excludeFilters = { @ComponentScan.Filter(Controller.class) })
+@ImportResource({"classpath:META-INF/spring/root-context.xml",
+        "classpath:META-INF/spring/security.xml"})
+@Import({config.JettyConfiguration.class})
+@ComponentScan(basePackages = {"ca.unx.template"},
+        excludeFilters = {@ComponentScan.Filter(Controller.class)})
 public class RootConfiguration {
 }
