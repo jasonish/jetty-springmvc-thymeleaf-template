@@ -1,9 +1,8 @@
 package config;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -23,4 +22,20 @@ import org.springframework.stereotype.Controller;
 @ComponentScan(basePackages = {"ca.unx.template"},
         excludeFilters = {@ComponentScan.Filter(Controller.class)})
 public class RootConfiguration {
+
+    /**
+     * The 'default' metrics registry.
+     */
+    @Bean
+    public MetricRegistry metricsRegistry() {
+        return new MetricRegistry();
+    }
+
+    /**
+     * The metrics health check registry.
+     */
+    @Bean
+    public HealthCheckRegistry metricsHealthCheckRegistry() {
+        return new HealthCheckRegistry();
+    }
 }

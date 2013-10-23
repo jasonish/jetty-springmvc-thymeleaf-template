@@ -25,7 +25,11 @@
 
 package config;
 
-import com.yammer.metrics.reporting.AdminServlet;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlets.AdminServlet;
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -56,6 +60,12 @@ public class JettyConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private MetricRegistry metricRegistry;
+
+    @Autowired
+    private HealthCheckRegistry metricsHealthCheckRegistry;
+
     @Bean
     public ServletHolder dispatcherServlet() {
         AnnotationConfigWebApplicationContext ctx =
@@ -83,7 +93,14 @@ public class JettyConfiguration {
         handler.setContextPath("/");
         handler.setResourceBase(
                 new ClassPathResource("webapp").getURI().toString());
+
+        // Set Metric attributes on the handler for the metrics servlets, then
+        // add the metrics servlet.
+        handler.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry);
+        handler.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
+                metricsHealthCheckRegistry);
         handler.addServlet(AdminServlet.class, "/metrics/*");
+
         handler.addServlet(dispatcherServlet(), "/");
 
         handler.addFilter(new FilterHolder(
@@ -95,7 +112,7 @@ public class JettyConfiguration {
 
     /**
      * Jetty Server bean.
-     *
+     * <p/>
      * Instantiate the Jetty server.
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
