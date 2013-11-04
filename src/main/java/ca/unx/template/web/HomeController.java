@@ -1,6 +1,6 @@
 package ca.unx.template.web;
 
-import ca.unx.template.DummyService;
+import ca.unx.template.EchoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,13 @@ import java.util.Locale;
  * Handles requests for the application home page.
  */
 @Controller
-public class DummyController {
+public class HomeController {
 
     private static final Logger logger = LoggerFactory
-            .getLogger(DummyController.class);
+            .getLogger(HomeController.class);
 
-    /*
-     * Autowire in the dummy service from the root application context.
-     */
     @Autowired
-    private DummyService dummyService = null;
+    private EchoService echoService = null;
 
     /**
      * Simple controller for "/" that returns a Thymeleaf view.
@@ -43,7 +40,7 @@ public class DummyController {
         String formattedDate = dateFormat.format(date);
 
         model.addAttribute("serverTime", formattedDate);
-        model.addAttribute("dummyService", dummyService);
+        model.addAttribute("echoService", echoService);
         model.addAttribute("someItems", new String[] { "one", "two", "three" });
 
         return "home";

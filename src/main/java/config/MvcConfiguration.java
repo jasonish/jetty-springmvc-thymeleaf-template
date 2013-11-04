@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -33,22 +34,14 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Allow the default servlet to serve static files from the webapp root.
+     * @param configurer
+     */
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
-        /*
-         * Server static resources from the src/main/resources/webapp/resources
-         * directory. Perhaps rename resources to static.
-         */
-        registry.addResourceHandler("/resources/**").addResourceLocations(
-                "/resources/");
-
-        /*
-         * Favicon mapping.
-         */
-        registry.addResourceHandler("/favicon.ico").addResourceLocations(
-                "/resources/favicon.ico");
-
+    public void configureDefaultServletHandling(
+            DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
     }
 
     @Bean

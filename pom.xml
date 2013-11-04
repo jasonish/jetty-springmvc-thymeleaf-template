@@ -19,7 +19,7 @@
     <logback.version>1.0.13</logback.version>
     <jetty.version>9.0.6.v20130930</jetty.version>
     <yammer.metrics.version>3.0.1</yammer.metrics.version>
-    <thymeleaf.version>2.0.19</thymeleaf.version>
+    <thymeleaf.version>2.1.0.RELEASE</thymeleaf.version>
     <junit.version>4.11</junit.version>
   </properties>
 

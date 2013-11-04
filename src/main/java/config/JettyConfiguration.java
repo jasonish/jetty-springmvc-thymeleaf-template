@@ -32,9 +32,8 @@ import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import java.io.IOException;
 
@@ -66,48 +63,43 @@ public class JettyConfiguration {
     @Autowired
     private HealthCheckRegistry metricsHealthCheckRegistry;
 
-    @Bean
-    public ServletHolder dispatcherServlet() {
-        AnnotationConfigWebApplicationContext ctx =
-                new AnnotationConfigWebApplicationContext();
-        ctx.register(MvcConfiguration.class);
-        DispatcherServlet servlet = new DispatcherServlet(ctx);
-        ServletHolder holder = new ServletHolder("dispatcher-servlet", servlet);
-        holder.setInitOrder(1);
-        return holder;
-    }
-
-    @Bean
-    public ServletContextHandler servletContext() throws IOException {
-        ServletContextHandler handler =
-                new ServletContextHandler(ServletContextHandler.SESSIONS);
-
-        AnnotationConfigWebApplicationContext webApplicationContext =
-                new AnnotationConfigWebApplicationContext();
-        webApplicationContext.setParent(applicationContext);
-        webApplicationContext.refresh();
-        handler.setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                webApplicationContext);
-
-        handler.setContextPath("/");
-        handler.setResourceBase(
-                new ClassPathResource("webapp").getURI().toString());
+    private void addMetricsServlet(WebAppContext webAppContext) {
 
         // Set Metric attributes on the handler for the metrics servlets, then
         // add the metrics servlet.
-        handler.setAttribute(MetricsServlet.METRICS_REGISTRY, metricRegistry);
-        handler.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
+        webAppContext.setAttribute(MetricsServlet.METRICS_REGISTRY,
+                metricRegistry);
+        webAppContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
                 metricsHealthCheckRegistry);
-        handler.addServlet(AdminServlet.class, "/metrics/*");
 
-        handler.addServlet(dispatcherServlet(), "/");
+        webAppContext.addServlet(new ServletHolder(new AdminServlet()),
+                "/metrics/*");
+    }
 
-        handler.addFilter(new FilterHolder(
-                new DelegatingFilterProxy("springSecurityFilterChain")), "/*",
-                null);
+    @Bean
+    public WebAppContext webAppContext() throws IOException {
 
-        return handler;
+        WebAppContext ctx = new WebAppContext();
+        ctx.setContextPath("/");
+        ctx.setWar(new ClassPathResource("webapp").getURI().toString());
+
+        /* Disable directory listings if no index.html is found. */
+        ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed",
+                "false");
+
+        /* Create the root web application context and set it as a servlet
+         * attribute so the dispatcher servlet can find it. */
+        GenericWebApplicationContext webApplicationContext =
+                new GenericWebApplicationContext();
+        webApplicationContext.setParent(applicationContext);
+        webApplicationContext.refresh();
+        ctx.setAttribute(
+                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+                webApplicationContext);
+
+        ctx.addEventListener(new WebAppInitializer());
+
+        return ctx;
     }
 
     /**
@@ -126,7 +118,11 @@ public class JettyConfiguration {
         httpConnector.setPort(8080);
         server.addConnector(httpConnector);
 
-        server.setHandler(servletContext());
+        server.setHandler(webAppContext());
+
+        /* We can add servlets or here, or we could do it in the
+         * WebAppInitializer. */
+        addMetricsServlet(webAppContext());
 
         return server;
     }

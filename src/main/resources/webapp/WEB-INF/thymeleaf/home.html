@@ -15,6 +15,14 @@
     <li th:each="item : ${someItems}" th:text="${item}"></li>
 </ul>
 
+<p>Do we have an echo service?</p>
+<div th:if="${echoService == null}">
+    <p>No, echo service is null.</p>
+</div>
+<div th:if="${echoService != null}">
+    <p>Yes: sending "echo": got <span th:text="${echoService.echo('echo')}"></span></p>
+</div>
+
 <p>Do we have a message from the dummy service:</p>
 
 <div th:if="${dummyService == null}">
@@ -24,7 +32,7 @@
     <p>Yes: <span th:text="${dummyService.getMessage()}"></span></p>
 </div>
 
-<p><a href="resources/static.txt">A static file.</a></p>
+<p><a href="static.txt">A static file.</a></p>
 
 <p><a href="metrics">Yammer Metrics</a></p>
 

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Controller;
 
 /**
  * The root application context.
- *
+ * <p/>
  * Beans can also be configured by XML in root-context.xml which is imported by
  * this context class.
- *
+ * <p/>
  * Component scanning is also done to pickup any components other than
  *
  * @Controllers. @Controllers will be picked up by the SpringMVC context.
@@ -20,11 +20,12 @@ import org.springframework.stereotype.Controller;
         "classpath:META-INF/spring/security.xml"})
 @Import({config.JettyConfiguration.class})
 @ComponentScan(basePackages = {"ca.unx.template"},
-        excludeFilters = {@ComponentScan.Filter(Controller.class)})
+        excludeFilters = {@ComponentScan.Filter(Controller.class),
+                @ComponentScan.Filter(Configuration.class)})
 public class RootConfiguration {
 
     /**
-     * The 'default' metrics registry.
+     * The metrics registry.
      */
     @Bean
     public MetricRegistry metricsRegistry() {
