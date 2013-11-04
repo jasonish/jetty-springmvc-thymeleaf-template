@@ -21,9 +21,22 @@ compared to using JSP views with embedded Jetty.
 
 Then point your browser at http://localhost:8080.
 
-### Shaded Jar
+### Basic Jar
+
+The default package goal will build a jar in the target directory with
+dependency jars copied into target/lib.
 
     mvn package
+    java -jar target/jetty-springmvc-thymeleaf-template-0.0.1-SNAPSHOT.jar
+
+Then point your browser at http://localhost:8080.
+
+### Fat Jar
+
+If you would rather have a single jar that contains all the
+dependencies, use the 'fatjar' profile.
+
+    mvn -Pfatjar package
     java -jar target/jetty-springmvc-thymeleaf-template-0.0.1-SNAPSHOT.jar
 
 Then point your browser at http://localhost:8080.
