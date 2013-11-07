@@ -4,7 +4,7 @@
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
- * files (the “Software”), to deal in the Software without
+ * files (the â€œSoftwareâ€�), to deal in the Software without
  * restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is
@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ * THE SOFTWARE IS PROVIDED â€œAS ISâ€�, WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
@@ -25,11 +25,8 @@
 
 package config;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.servlets.AdminServlet;
-import com.codahale.metrics.servlets.HealthCheckServlet;
-import com.codahale.metrics.servlets.MetricsServlet;
+import java.io.IOException;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -44,7 +41,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
-import java.io.IOException;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlets.AdminServlet;
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
 
 /**
  * Configure the embedded Jetty server and the SpringMVC dispatcher servlet.
@@ -52,78 +53,85 @@ import java.io.IOException;
 @Configuration
 public class JettyConfiguration {
 
-    final Logger logger = LoggerFactory.getLogger(getClass());
+	final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    @Autowired
-    private MetricRegistry metricRegistry;
+	@Autowired
+	private MetricRegistry metricRegistry;
 
-    @Autowired
-    private HealthCheckRegistry metricsHealthCheckRegistry;
+	@Autowired
+	private HealthCheckRegistry metricsHealthCheckRegistry;
 
-    private void addMetricsServlet(WebAppContext webAppContext) {
+	private void addMetricsServlet(WebAppContext webAppContext) {
 
-        // Set Metric attributes on the handler for the metrics servlets, then
-        // add the metrics servlet.
-        webAppContext.setAttribute(MetricsServlet.METRICS_REGISTRY,
-                metricRegistry);
-        webAppContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
-                metricsHealthCheckRegistry);
+		// Set Metric attributes on the handler for the metrics servlets, then
+		// add the metrics servlet.
+		webAppContext.setAttribute(MetricsServlet.METRICS_REGISTRY,
+				metricRegistry);
+		webAppContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
+				metricsHealthCheckRegistry);
 
-        webAppContext.addServlet(new ServletHolder(new AdminServlet()),
-                "/metrics/*");
-    }
+		webAppContext.addServlet(new ServletHolder(new AdminServlet()),
+				"/metrics/*");
+	}
 
-    @Bean
-    public WebAppContext webAppContext() throws IOException {
+	@Bean
+	public WebAppContext webAppContext() throws IOException {
 
-        WebAppContext ctx = new WebAppContext();
-        ctx.setContextPath("/");
-        ctx.setWar(new ClassPathResource("webapp").getURI().toString());
+		WebAppContext ctx = new WebAppContext();
+		ctx.setContextPath("/");
+		ctx.setWar(new ClassPathResource("webapp").getURI().toString());
 
-        /* Disable directory listings if no index.html is found. */
-        ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed",
-                "false");
+		/* Disable directory listings if no index.html is found. */
+		ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed",
+				"false");
 
-        /* Create the root web application context and set it as a servlet
-         * attribute so the dispatcher servlet can find it. */
-        GenericWebApplicationContext webApplicationContext =
-                new GenericWebApplicationContext();
-        webApplicationContext.setParent(applicationContext);
-        webApplicationContext.refresh();
-        ctx.setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                webApplicationContext);
+		/*
+		 * Create the root web application context and set it as a servlet
+		 * attribute so the dispatcher servlet can find it.
+		 */
+		GenericWebApplicationContext webApplicationContext = new GenericWebApplicationContext();
+		webApplicationContext.setParent(applicationContext);
+		webApplicationContext.refresh();
+		ctx.setAttribute(
+				WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+				webApplicationContext);
 
-        ctx.addEventListener(new WebAppInitializer());
+		ctx.addEventListener(new WebAppInitializer());
 
-        return ctx;
-    }
+		return ctx;
+	}
 
-    /**
-     * Jetty Server bean.
-     * <p/>
-     * Instantiate the Jetty server.
-     */
-    @Bean(initMethod = "start", destroyMethod = "stop")
-    public Server jettyServer() throws IOException {
+	/**
+	 * Jetty Server bean.
+	 * <p/>
+	 * Instantiate the Jetty server.
+	 */
+	@Bean(initMethod = "start", destroyMethod = "stop")
+	public Server jettyServer() throws IOException {
 
-        /* Create the server. */
-        Server server = new Server();
+		/* Create the server. */
+		Server server = new Server();
 
-        /* Create a basic connector. */
-        ServerConnector httpConnector = new ServerConnector(server);
-        httpConnector.setPort(8080);
-        server.addConnector(httpConnector);
+		/* Create a basic connector. */
+		ServerConnector httpConnector = new ServerConnector(server);
+		Integer port = 8181;
+		if (System.getenv("PORT") != null) {
+			port = Integer.parseInt(System.getenv("PORT"));
+		}
+		httpConnector.setPort(port);
+		server.addConnector(httpConnector);
 
-        server.setHandler(webAppContext());
+		server.setHandler(webAppContext());
 
-        /* We can add servlets or here, or we could do it in the
-         * WebAppInitializer. */
-        addMetricsServlet(webAppContext());
+		/*
+		 * We can add servlets or here, or we could do it in the
+		 * WebAppInitializer.
+		 */
+		addMetricsServlet(webAppContext());
 
-        return server;
-    }
+		return server;
+	}
 }
