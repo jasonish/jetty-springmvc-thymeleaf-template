@@ -3,6 +3,7 @@ package config;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -23,6 +24,14 @@ import org.springframework.stereotype.Controller;
         excludeFilters = {@ComponentScan.Filter(Controller.class),
                 @ComponentScan.Filter(Configuration.class)})
 public class RootConfiguration {
+
+    /**
+     * Allows access to environment properties.  eg @Value("${jetty.port}).
+     */
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
     /**
      * The metrics registry.

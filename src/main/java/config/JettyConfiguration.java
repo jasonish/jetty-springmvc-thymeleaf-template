@@ -37,6 +37,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
+import javax.xml.transform.sax.SAXSource;
 import java.io.IOException;
 
 /**
@@ -62,6 +64,9 @@ public class JettyConfiguration {
 
     @Autowired
     private HealthCheckRegistry metricsHealthCheckRegistry;
+
+    @Value("${jetty.port:8080}")
+    private int jettyPort;
 
     private void addMetricsServlet(WebAppContext webAppContext) {
 
@@ -115,7 +120,7 @@ public class JettyConfiguration {
 
         /* Create a basic connector. */
         ServerConnector httpConnector = new ServerConnector(server);
-        httpConnector.setPort(8080);
+        httpConnector.setPort(jettyPort);
         server.addConnector(httpConnector);
 
         server.setHandler(webAppContext());
