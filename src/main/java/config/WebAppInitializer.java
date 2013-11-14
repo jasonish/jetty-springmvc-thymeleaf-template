@@ -100,7 +100,7 @@ public class WebAppInitializer extends
     }
 
     /**
-     * Overrided to squelch a meaningless log message when embedded.
+     * Override to squelch a meaningless log message when embedded.
      */
     @Override
     protected void registerContextLoaderListener(ServletContext servletContext) {
