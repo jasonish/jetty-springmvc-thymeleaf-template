@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring3.SpringTemplateEngine;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
@@ -34,6 +31,14 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+
+        /* Mapping to the login view. */
+        registry.addViewController("/login").setViewName("login");
+
+    }
+
     /**
      * Allow the default servlet to serve static files from the webapp root.
      * @param configurer
@@ -48,7 +53,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     public ServletContextTemplateResolver thymeleafTemplateResolver() {
         ServletContextTemplateResolver resolver =
                 new ServletContextTemplateResolver();
-        resolver.setPrefix("/WEB-INF/thymeleaf/");
+        resolver.setPrefix("/WEB-INF/views/");
         resolver.setSuffix(".html");
         resolver.setTemplateMode("HTML5");
         resolver.setCacheable(true);

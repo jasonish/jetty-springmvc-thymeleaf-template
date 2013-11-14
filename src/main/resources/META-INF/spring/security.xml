@@ -11,10 +11,16 @@
   its mainly here to show how to wire it in when using embedded jetty. -->
 
   <http auto-config="true">
+
     <intercept-url pattern="/admin/**" access="ROLE_USER"/>
 
-    <!-- Comment out the following line to use form based authentication. -->
+    <!-- Spring Security can provide a basic login form, but you probably
+      want to provide a better looking one. -->
+    <form-login login-page="/login" authentication-failure-url="/login?error" />
+
+    <!-- Accept HTTP basic authentication. -->
     <http-basic/>
+
   </http>
 
   <authentication-manager>
