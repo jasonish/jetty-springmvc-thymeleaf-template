@@ -42,6 +42,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
@@ -103,6 +104,7 @@ public class JettyConfiguration {
                 webApplicationContext);
 
         ctx.addEventListener(new WebAppInitializer());
+        ctx.addEventListener(new SpringSecurityWebAppInitializer());
 
         return ctx;
     }

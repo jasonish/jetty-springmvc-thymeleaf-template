@@ -27,7 +27,6 @@ package config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.ServletContext;
@@ -46,7 +45,7 @@ public class WebAppInitializer extends
      */
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class[]{};
     }
 
     /**
@@ -76,11 +75,6 @@ public class WebAppInitializer extends
         /* Let super do its thing... */
         super.onStartup(servletContext);
 
-        /* Add the Spring Security filter. */
-        servletContext.addFilter("springSecurityFilterChain",
-                new DelegatingFilterProxy()).addMappingForUrlPatterns(null,
-                false, "/*");
-
         /* We could add more servlets here such as the metrics servlet which is
          * added in @{link ca.unx.template.config.JettyConfiguration}. */
     }
@@ -89,7 +83,8 @@ public class WebAppInitializer extends
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
             onStartup(servletContextEvent.getServletContext());
-        } catch (ServletException e) {
+        }
+        catch (ServletException e) {
             logger.error("Failed to initialize web application", e);
             System.exit(0);
         }
@@ -103,6 +98,7 @@ public class WebAppInitializer extends
      * Override to squelch a meaningless log message when embedded.
      */
     @Override
-    protected void registerContextLoaderListener(ServletContext servletContext) {
+    protected void registerContextLoaderListener(
+            ServletContext servletContext) {
     }
 }

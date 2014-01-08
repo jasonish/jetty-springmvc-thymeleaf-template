@@ -17,9 +17,8 @@ import org.springframework.stereotype.Controller;
  * @Controllers. @Controllers will be picked up by the SpringMVC context.
  */
 @Configuration
-@ImportResource({"classpath:META-INF/spring/root-context.xml",
-        "classpath:META-INF/spring/security.xml"})
-@Import({config.JettyConfiguration.class})
+@ImportResource({"classpath:META-INF/spring/root-context.xml"})
+@Import({config.JettyConfiguration.class, config.SpringSecurityConfig.class})
 @ComponentScan(basePackages = {"ca.unx.template"},
         excludeFilters = {@ComponentScan.Filter(Controller.class),
                 @ComponentScan.Filter(Configuration.class)})
