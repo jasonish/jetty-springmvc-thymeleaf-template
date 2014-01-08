@@ -19,7 +19,7 @@
     <form-login login-page="/login" authentication-failure-url="/login?error" />
 
     <!-- Accept HTTP basic authentication. -->
-    <http-basic/>
+    <!--<http-basic/>-->
 
   </http>
 

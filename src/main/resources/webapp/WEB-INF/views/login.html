@@ -8,7 +8,7 @@
 <!--/* A very crude way of telling the user the login failed. */-->
 <p th:if="${param.error}">Login failed.</p>
 
-<form th:action="@{/j_spring_security_check}" method="POST">
+<form th:action="@{/login}" method="POST">
     <table>
         <tr>
             <td>User:</td>
