@@ -30,13 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletException;
 
-public class WebAppInitializer extends
-        AbstractAnnotationConfigDispatcherServletInitializer implements
-        ServletContextListener {
+public class SpringWebAppInitializer extends
+        AbstractAnnotationConfigDispatcherServletInitializer {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -66,32 +62,6 @@ public class WebAppInitializer extends
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
-    }
-
-    @Override
-    public void onStartup(
-            ServletContext servletContext) throws ServletException {
-
-        /* Let super do its thing... */
-        super.onStartup(servletContext);
-
-        /* We could add more servlets here such as the metrics servlet which is
-         * added in @{link ca.unx.template.config.JettyConfiguration}. */
-    }
-
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        try {
-            onStartup(servletContextEvent.getServletContext());
-        }
-        catch (ServletException e) {
-            logger.error("Failed to initialize web application", e);
-            System.exit(0);
-        }
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
     }
 
     /**

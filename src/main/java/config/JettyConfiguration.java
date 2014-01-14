@@ -42,11 +42,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
-import javax.xml.transform.sax.SAXSource;
 import java.io.IOException;
 
 /**
@@ -99,12 +98,15 @@ public class JettyConfiguration {
                 new GenericWebApplicationContext();
         webApplicationContext.setParent(applicationContext);
         webApplicationContext.refresh();
-        ctx.setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                webApplicationContext);
 
-        ctx.addEventListener(new WebAppInitializer());
-        ctx.addEventListener(new SpringSecurityWebAppInitializer());
+        ctx.setParentLoaderPriority(true);
+
+        ctx.addEventListener(new ContextLoaderListener(webApplicationContext));
+        ctx.addEventListener(
+                new WebAppInitializerLoader(new WebApplicationInitializer[]{
+                        new SpringWebAppInitializer(),
+                        new SpringSecurityWebAppInitializer()
+                }));
 
         return ctx;
     }
@@ -115,7 +117,7 @@ public class JettyConfiguration {
      * Instantiate the Jetty server.
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public Server jettyServer() throws IOException {
+    public Server jettyServer() throws Exception {
 
         /* Create the server. */
         Server server = new Server();
@@ -128,7 +130,7 @@ public class JettyConfiguration {
         server.setHandler(webAppContext());
 
         /* We can add servlets or here, or we could do it in the
-         * WebAppInitializer. */
+         * SpringWebAppInitializer. */
         addMetricsServlet(webAppContext());
 
         return server;
