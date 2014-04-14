@@ -41,7 +41,7 @@ public class SpringWebAppInitializer extends
      */
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{};
+        return null;
     }
 
     /**
