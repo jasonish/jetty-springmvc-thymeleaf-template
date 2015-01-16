@@ -1,6 +1,10 @@
 Template - Embedded Jetty/SpringMVC/Thymeleaf Application
 =========================================================
 
+Consider using [Spring Boot](http://projects.spring.io/spring-boot/)
+for a simpler way of building a Spring MVC application with an
+embedded web server.
+
 ## Summary
 
 This is a standalone Spring based Java application that embeds Jetty
