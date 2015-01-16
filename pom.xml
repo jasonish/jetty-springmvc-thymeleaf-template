@@ -16,13 +16,13 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <java.version>1.7</java.version>
-    <springframework.version>4.0.3.RELEASE</springframework.version>
-    <springsecurity.version>3.2.3.RELEASE</springsecurity.version>
-    <slf4j.version>1.7.7</slf4j.version>
+    <springframework.version>4.1.4.RELEASE</springframework.version>
+    <springsecurity.version>3.2.5.RELEASE</springsecurity.version>
+    <slf4j.version>1.7.10</slf4j.version>
     <logback.version>1.1.2</logback.version>
-    <jetty.version>9.1.4.v20140401</jetty.version>
-    <codahale.metrics.version>3.0.1</codahale.metrics.version>
-    <thymeleaf.version>2.1.2.RELEASE</thymeleaf.version>
+    <jetty.version>9.2.6.v20141205</jetty.version>
+    <dropwizard.metrics.version>3.1.0</dropwizard.metrics.version>
+    <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
     <junit.version>4.11</junit.version>
   </properties>
 
@@ -118,16 +118,16 @@
       <version>3.1.0</version>
     </dependency>
 
-    <!-- Yammer (Coda Hale) Metrics -->
+    <!-- Dropwizard Metrics -->
     <dependency>
-      <groupId>com.codahale.metrics</groupId>
+      <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-core</artifactId>
-      <version>${codahale.metrics.version}</version>
+      <version>${dropwizard.metrics.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.codahale.metrics</groupId>
+      <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-servlets</artifactId>
-      <version>${codahale.metrics.version}</version>
+      <version>${dropwizard.metrics.version}</version>
     </dependency>
 
   </dependencies>
